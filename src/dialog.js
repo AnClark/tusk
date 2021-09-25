@@ -74,33 +74,39 @@ class Dialog {
   }
 
   confirmAbout() {
-    if (this._about() === 1) {
-      clipboard.writeText(this._systemInfo);
-    }
+    this._about().then((retValue) => {
+      if (retValue.response === 1)
+        clipboard.writeText(this._systemInfo);
+    });
   }
 
   confirmExit() {
     if (settings.get('requestExitConfirmation')) {
-      if (this._exit() === 0) {
-        app.quit();
-      }
+      this._exit().then((retValue) => {
+        if (retValue.response === 0)
+          app.quit();
+      });
     } else {
       app.quit();
     }
   }
 
   confirmActivationRestart(option, state) {
-    if (this._restart() === 0) {
-      settings.set(option, state);
-      app.quit();
-      app.relaunch();
-    }
+    this._restart().then((retValue) => {
+      if (retValue.response === 0) {
+        settings.set(option, state);
+        app.quit();
+        app.relaunch();
+      }
+    });
   }
 
   confirmSignOut() {
-    if (this._signOut() === 0) {
-      activate('log-out');
-    }
+    this._signOut().then((retValue) => {
+      if (retValue.response === 0) {
+        activate('log-out');
+      }
+    });
   }
 
   updateError(content) {
@@ -117,9 +123,11 @@ class Dialog {
   }
 
   getUpdate(version) {
-    if (this._update(version) === 0) {
-      shell.openExternal(release);
-    }
+    this._update(version).then((retValue) => {
+      if (retValue.response === 0) {
+        shell.openExternal(release);
+      }
+    });
   }
 }
 
